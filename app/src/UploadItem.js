@@ -22,7 +22,7 @@ export default class UploadItem extends React.Component{
       description: '',
       category: '',
       price: '',
-      url: '',
+      imageUrl: '',
       isLoading: false,
     };
   }
@@ -59,6 +59,13 @@ export default class UploadItem extends React.Component{
 
       }
     });
+  }
+
+  setPath= (url) => {
+    this.setState({
+      imageUrl:url
+    })
+    console.log("url uploaded", this.state.imageUrl);
   }
 
   _takePicture = () => {
@@ -103,14 +110,14 @@ export default class UploadItem extends React.Component{
       description: this.state.description,
       category: this.state.category,
       price: parseFloat(this.state.price),
-      url: this.state.url,
+      url: this.state.imageUrl,
     }).then((docRef) => {
       this.setState({
         name: '',
         description: '',
         category: '',
         price: '',
-        url: '',
+        imageUrl: '',
         isLoading: false,
       });
       this.props.navigation.goBack();

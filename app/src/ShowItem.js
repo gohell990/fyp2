@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableHighlight, StyleSheet, ScrollView, ActivityIndicator, View, Text, FlatList } from 'react-native';
+import { Image, TouchableHighlight, StyleSheet, ScrollView, ActivityIndicator, View, Text, FlatList } from 'react-native';
 import { List, ListItem, Button, Icon } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 
@@ -20,7 +20,7 @@ export default class ShowItem extends React.Component{
     const items = [];
 
     querySnapshot.forEach((doc) => {
-      const { name, description, category, price } = doc.data();
+      const { name, description, category, price, url } = doc.data();
       items.push({
         key: doc.id,
         doc,
@@ -28,6 +28,7 @@ export default class ShowItem extends React.Component{
         description,
         category,
         price,
+        url,
       });
     });
     this.setState({
@@ -62,16 +63,20 @@ export default class ShowItem extends React.Component{
                   });
                 }}
               >
-              <View style={styles.item}>
-                <Text style={styles.itemTitle}>{item.name}</Text>
-                <Text style={styles.itemSubtitle}>{item.key}</Text>
-              </View>
+                <View style={styles.item}>
+                  <Image source={{uri:`${item.url}`}}
+                      style={styles.image}/>
+                  <View style={styles.itemDetails}>
+                    <Text numberOfLines={1} style={styles.itemTitle}>{item.name}</Text>
+                    <Text style={styles.itemTitle}>RM {item.price}</Text>
+                    <Text style={styles.itemSubtitle}>{item.category}</Text>
+                  </View>
+                </View>
               </TouchableHighlight>
 
           }
           keyExtractor={(item) => {item.key.toString()}}
         />
-
 
       </ScrollView>
     );}
@@ -79,38 +84,40 @@ export default class ShowItem extends React.Component{
 }
 
 const styles = StyleSheet.create({
+  image:{
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  itemDetails:{
+    paddingTop: 15,
+    flex: 2,
+    width: '100%',
+    height: '100%',
+  },
   container: {
-   flex: 1,
-   paddingBottom: 22
+    flex: 1,
+    paddingBottom: 22
   },
   item: {
     justifyContent: 'center',
+    flexDirection: 'row',
+    flex: 1,
     borderRadius: 2,
     borderBottomWidth: 1,
     borderColor: '#ccc',
     marginBottom:10,
-    padding: 35,
     fontSize: 18,
-    height: 44,
+
   },
 
   itemTitle: {
     fontSize: 22,
     fontWeight: '500',
     color: '#000',
-    marginTop: 30,
   },
   itemSubtitle: {
     fontSize: 18,
     marginBottom:20
   },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 })
