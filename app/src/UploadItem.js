@@ -22,6 +22,7 @@ export default class UploadItem extends React.Component{
       description: '',
       category: '',
       price: '',
+      url: '',
       isLoading: false,
     };
   }
@@ -42,20 +43,19 @@ export default class UploadItem extends React.Component{
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
         const fileName = response.fileName + firebase.auth().currentUser.uid;
         const imageRef = firebase.storage().ref('/images/').child(fileName);
-        imageRef.put(response.uri,{contentType:'image/jpeg'});
-        console.log('uploaded');
+        imageRef.put(response.uri,{contentType:'image/jpeg'})
 
-
-        imageRef.getDownloadURL()
-         .then((url) => {
-             console.log(url);
-         });
+        .then(()=>{
+          return imageRef.getDownloadURL()
+        })
+        .then((url)=>{
+          this.setPath(url)
+        });
 
         this.setState({
           imageSource: source,
           imageFileName: fileName,
         });
-
 
       }
     });
@@ -103,12 +103,14 @@ export default class UploadItem extends React.Component{
       description: this.state.description,
       category: this.state.category,
       price: parseFloat(this.state.price),
+      url: this.state.url,
     }).then((docRef) => {
       this.setState({
         name: '',
         description: '',
         category: '',
         price: '',
+        url: '',
         isLoading: false,
       });
       this.props.navigation.goBack();
