@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, ScrollView, ActivityIndicator, View, TextInput } from 'react-native';
+import { Picker, Image, StyleSheet, ScrollView, ActivityIndicator, View, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
@@ -17,14 +17,22 @@ export default class UploadItem extends React.Component{
   constructor() {
     super();
     this.ref = firebase.firestore().collection('Items');
+    this.categoryData = ["Text Book/Notes", "Groceries", "Clothing", "Car", "Furniture"]
     this.state = {
       name: '',
       description: '',
       category: '',
       price: '',
       imageUrl: '',
+      selectedCategory: null,
       isLoading: false,
     };
+  }
+
+  categoryList = () => {
+    return (this.categoryData.map( (x, i) => {
+      return( <Picker.Item label={x} key={i} value={x} />)
+    }));
   }
 
   choosePhoto= () => {
@@ -108,7 +116,7 @@ export default class UploadItem extends React.Component{
     this.ref.add({
       name: this.state.name,
       description: this.state.description,
-      category: this.state.category,
+      category: this.state.selectedCategory,
       price: parseFloat(this.state.price),
       url: this.state.imageUrl,
     }).then((docRef) => {
@@ -161,11 +169,11 @@ export default class UploadItem extends React.Component{
           />
         </View>
         <View style={styles.subContainer}>
-          <TextInput
-              placeholder={'Category'}
-              value={this.state.category}
-              onChangeText={(text) => this.updateTextInput(text, 'category')}
-          />
+          <Picker
+            selectedValue={this.state.selectedCategory}
+            onValueChange={ (value) => ( this.setState({selectedCategory : value}) )}>
+            { this.categoryList() }
+          </Picker>
         </View>
         <View style={styles.subContainer}>
           <TextInput

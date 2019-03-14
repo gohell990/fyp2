@@ -30,4 +30,7 @@ target 'fypproject' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
 end

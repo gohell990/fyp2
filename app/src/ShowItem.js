@@ -3,6 +3,7 @@ import { Image, TouchableHighlight, StyleSheet, ScrollView, ActivityIndicator, V
 import { List, ListItem, Button, Icon } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 
+
 export default class ShowItem extends React.Component{
   static navigationOptions = { title: 'My Item List'};
 
@@ -39,6 +40,7 @@ export default class ShowItem extends React.Component{
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+
   }
 
   render() {

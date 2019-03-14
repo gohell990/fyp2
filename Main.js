@@ -9,15 +9,6 @@ import MyAccountScreen from './app/src/MyAccountScreen';
 import SettingsScreen from './app/src/SettingsScreen';
 
 export default class Main extends React.Component {
-  handleLogout = () => {
-    const { email, password } = this.state
-    firebase
-    .auth()
-    .signOut()
-    .then(() => this.props.navigation.navigate('Login'))
-    .catch(error => this.setState({errorMessage:error.message}))
-    console.log('handleLogout')
-  }
 
   constructor() {
     super();
@@ -71,8 +62,8 @@ export default class Main extends React.Component {
         return (
 
             <ScrollView contentContainerStyle={styles.container}>
-              <Text>
-                Hi {currentUser && currentUser.email}!
+              <Text style={{justifyContent:'center', alignItems:'center'}}>
+                You are using {currentUser && currentUser.email}!
               </Text>
               <FlatList
                 data={this.state.items}
@@ -101,9 +92,9 @@ export default class Main extends React.Component {
               />
               <View style={styles.buttonContainer}>
                 <View style={styles.button}>
-                  <Button title="Logout" onPress={this.handleLogout}
+                  <Button title="Filter"
                   icon = {
-                    <Icon name="shopping-cart" size={20} style={styles.icon}/>
+                    <Icon name="filter" size={20} style={styles.icon}/>
                   }/>
                 </View>
                 <View style={styles.button}>

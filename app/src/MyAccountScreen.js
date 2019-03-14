@@ -3,8 +3,21 @@ import { View, Text, StyleSheet } from 'react-native';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Content, Left, Right} from 'native-base';
+import firebase from 'react-native-firebase';
 
 export default class MyAccountScreen extends React.Component{
+
+  state = { currentUser: null }
+
+  handleLogout = () => {
+    const { email, password } = this.state
+    firebase
+    .auth()
+    .signOut()
+    .then(() => this.props.navigation.navigate('Login'))
+    .catch(error => this.setState({errorMessage:error.message}))
+    console.log('handleLogout')
+  }
 
   render(){
     return(
@@ -13,7 +26,7 @@ export default class MyAccountScreen extends React.Component{
         <Text> MyAccountScreen </Text>
         <View style={styles.buttonContainer}>
           <View style={styles.button}>
-            <Button title="Logout"
+            <Button title="Logout" onPress={this.handleLogout}
             icon = {
               <Icon name="sign-out" size={20} style={styles.icon}/>
             }/>
