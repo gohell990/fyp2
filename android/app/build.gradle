@@ -154,7 +154,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-permissions')
     implementation project(':react-native-image-picker')
     implementation project(':react-native-vector-icons')
   //noinspection GradleDynamicVersion

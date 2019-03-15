@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableHighlight, ActivityIndicator, ScrollView, StyleSheet, Image, Text, View } from 'react-native';
 import firebase from 'react-native-firebase';
-import {Button} from 'react-native-elements';
+import { Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import MyAccountScreen from './app/src/MyAccountScreen';
@@ -9,6 +9,8 @@ import MyAccountScreen from './app/src/MyAccountScreen';
 import SettingsScreen from './app/src/SettingsScreen';
 
 export default class Main extends React.Component {
+
+  static navigationOptions = { title: 'Home Page'};
 
   constructor() {
     super();
@@ -93,24 +95,27 @@ export default class Main extends React.Component {
               <View style={styles.buttonContainer}>
                 <View style={styles.button}>
                   <Button title="Filter"
-                  icon = {
-                    <Icon name="filter" size={20} style={styles.icon}/>
-                  }/>
-                </View>
-                <View style={styles.button}>
-                  <Button
-                    title="Settings"
-                    onPress={()=>this.props.navigation.navigate('Settings')}
                     icon = {
-                      <Icon name="shopping-cart" size={20} style={styles.icon}/>
+                      <Icon name="filter" size={20} style={styles.icon}/>
                     }
                   />
                 </View>
                 <View style={styles.button}>
-                  <Button title="My Account" onPress={()=>this.props.navigation.navigate('MyAccount')}
+                  <Button
                     icon = {
-                      <Icon name="shopping-cart" size={20} style={styles.icon}/>
-                    }/>
+                      <Icon name="cog" size={20} style={styles.icon}/>
+                    }
+                    title="Settings"
+                    onPress={()=>this.props.navigation.navigate('Settings')}
+                  />
+                </View>
+                <View style={styles.button}>
+                  <Button title="My Account"
+                    onPress={()=>this.props.navigation.navigate('MyAccount')}
+                    icon = {
+                      <Icon name="user-circle" size={20} style={styles.icon}/>
+                    }
+                  />
                 </View>
               </View>
             </ScrollView>
@@ -130,13 +135,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
   },
+  icon:{
+    marginRight: 10,
+  },
   button: {
 
     justifyContent: 'flex-end',
     flex: 1,
-  },
-  icon: {
-    marginRight: 10,
   },
   image:{
     flex: 1,

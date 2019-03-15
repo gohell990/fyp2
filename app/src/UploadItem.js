@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Picker, Image, StyleSheet, ScrollView, ActivityIndicator, View, TextInput } from 'react-native';
+import { Alert, ScrollView, Picker, Image, StyleSheet, ActivityIndicator, View, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 import ImagePicker from 'react-native-image-picker';
@@ -17,15 +17,18 @@ export default class UploadItem extends React.Component{
   constructor() {
     super();
     this.ref = firebase.firestore().collection('Items');
-    this.categoryData = ["Text Book/Notes", "Groceries", "Clothing", "Car", "Furniture"]
+    this.categoryData = ["Select Category", "Text Book/Notes", "Groceries", "Fashion", "Car", "Furniture", "Health & Beauty"]
     this.state = {
       name: '',
       description: '',
       category: '',
       price: '',
       imageUrl: '',
+      timestamp: '',
+      user: '',
       selectedCategory: null,
       isLoading: false,
+      loadingImage: false,
     };
   }
 
@@ -36,6 +39,8 @@ export default class UploadItem extends React.Component{
   }
 
   choosePhoto= () => {
+    this.setState({ loadingImage: true})
+
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
 
@@ -76,29 +81,6 @@ export default class UploadItem extends React.Component{
     console.log("url uploaded", this.state.imageUrl);
   }
 
-  _takePicture = () => {
-    const cam_options = {
-      mediaType: 'photo',
-      maxWidth: 1000,
-      maxHeight: 1000,
-      quality: 1,
-      noData: true,
-    };
-    ImagePicker.launchCamera(cam_options, (response) => {
-      if (response.didCancel) {
-      }
-      else if (response.error) {
-      }
-      else {
-        this.setState({
-          imagePath: response.uri,
-          imageHeight: response.height,
-          imageWidth: response.width,
-        })
-      }
-    })
-  }
-
   componentDidMount(){
 
   }
@@ -110,32 +92,43 @@ export default class UploadItem extends React.Component{
   }
 
   saveBoard() {
+
     this.setState({
       isLoading: true,
     });
-    this.ref.add({
-      name: this.state.name,
-      description: this.state.description,
-      category: this.state.selectedCategory,
-      price: parseFloat(this.state.price),
-      url: this.state.imageUrl,
-    }).then((docRef) => {
-      this.setState({
-        name: '',
-        description: '',
-        category: '',
-        price: '',
-        imageUrl: '',
-        isLoading: false,
+    if (this.state.selectedCategory == null || this.state.name == '' ||
+    this.state.imageUrl == '' || parseFloat(this.state.price) == 0 ||
+    parseFloat(this.state.price) < 0 ){
+      Alert.alert("Invalid Input");
+      this.props.navigation.navigate()
+    }else {
+      this.ref.add({
+        name: this.state.name,
+        description: this.state.description,
+        category: this.state.selectedCategory,
+        price: parseFloat(this.state.price),
+        url: this.state.imageUrl,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        user: firebase.auth().currentUser.uid,
+      }).then((docRef) => {
+        this.setState({
+          name: '',
+          description: '',
+          category: '',
+          price: '',
+          imageUrl: '',
+          isLoading: false,
+        });
+        this.props.navigation.goBack();
+      })
+
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+        this.setState({
+          isLoading: false,
+        });
       });
-      this.props.navigation.goBack();
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
-      this.setState({
-        isLoading: false,
-      });
-    });
+    }
   }
 
   render() {
@@ -149,7 +142,7 @@ export default class UploadItem extends React.Component{
     return (
       <ScrollView style={styles.container}>
         <View>
-          <Image source={this.state.imageSource} style={{width:'100%',height: 200, margin: 10}}/>
+          <Image source={this.state.loadingImage ? this.state.imageSource :require('../image/imageNotFound.png')} style={{width:'100%', height:300}}/>
           <Button title="Select Image" onPress={this.choosePhoto}/>
         </View>
         <View style={styles.subContainer}>
@@ -186,7 +179,6 @@ export default class UploadItem extends React.Component{
         <View style={styles.subContainer}>
           <Button
             large
-            leftIcon={{name: 'save'}}
             title='Save'
             onPress={() => this.saveBoard()} />
         </View>
@@ -206,6 +198,11 @@ const styles = StyleSheet.create({
     padding: 5,
     borderBottomWidth: 2,
     borderBottomColor: '#CCCCCC',
+  },
+  image:{
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   activity: {
     position: 'absolute',

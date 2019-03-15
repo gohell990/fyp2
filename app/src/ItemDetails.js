@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, ScrollView, ActivityIndicator, View } from 'react-native';
-import { List, ListItem, Text, Card, Button } from 'react-native-elements';
+import { ScrollView, Button, Image, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { List, ListItem, Text, Card } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 
 export default class ItemDetails extends React.Component{
@@ -60,34 +60,77 @@ export default class ItemDetails extends React.Component{
         </View>
       )
     }
-    return (
-      <ScrollView>
-        <Card style={styles.container}>
-          <View style={styles.subContainer}>
-            <View>
-              <Image source={{uri:`${this.state.item.url}`}}
-                style={styles.image}/>
-              <Text style={styles.name}>
+    else if(firebase.auth().currentUser.uid == this.state.item.user){
+      return (
+        <ScrollView>
+          <Card style={styles.container}>
+            <View style={styles.subContainer}>
+              <View>
+                <Image source={{uri:`${this.state.item.url}`}}
+                  style={styles.image}/>
+              </View>
+              <View style={styles.name}>
                 <Text> Name: </Text>
                 <Text style={styles.getItem}>{this.state.item.name}</Text>
-              </Text>
-              <Text style={styles.name}>
+              </View>
+              <View style={styles.name}>
                 <Text> Price: </Text>
                 <Text style={styles.getItem}>{this.state.item.price}</Text>
-              </Text>
-              <Text style={styles.name}>
+              </View>
+              <View style={styles.name}>
                 <Text> Category: </Text>
                 <Text style={styles.getItem}>{this.state.item.category}</Text>
-              </Text>
-              <Text style={styles.name}>
+              </View>
+              <View style={styles.name}>
                 <Text> Description: </Text>
                 <Text style={styles.getItem}>{this.state.item.description}</Text>
-              </Text>
+              </View>
+              <View style={styles.button}>
+                <Button title="Edit Item"
+                  onPress={()=>{this.props.navigation.navigate('EditItem', {
+                    itemkey: `${JSON.stringify(this.state.key)}`});
+                  }}
+                  />
+              </View>
+              <View style={styles.button}>
+                <Button title="Delete Item" onPress={()=> this.deleteBoard(this.state.key)}
+                  />
+              </View>
             </View>
-          </View>
-        </Card>
-      </ScrollView>
-    );
+          </Card>
+        </ScrollView>
+      );
+    }
+    else{
+      return(
+        <ScrollView>
+          <Card style={styles.container}>
+            <View style={styles.subContainer}>
+              <View style={styles.name}>
+                <Image source={{uri:`${this.state.item.url}`}}
+                  style={styles.image}/>
+              </View>
+              <View style={styles.name}>
+                <Text> Name: </Text>
+                <Text style={styles.getItem}>{this.state.item.name}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Price: </Text>
+                <Text style={styles.getItem}>{this.state.item.price}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Category: </Text>
+                <Text style={styles.getItem}>{this.state.item.category}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Description: </Text>
+                <Text style={styles.getItem}>{this.state.item.description}</Text>
+              </View>
+            </View>
+          </Card>
+        </ScrollView>
+      );
+    }
   }
 }
 
@@ -102,11 +145,15 @@ const styles = StyleSheet.create({
   getItem:{
     fontSize: 20,
     fontWeight: 'bold',
-
+  },
+  button: {
+    marginTop: 20,
+    borderRadius: 2
   },
   image: {
     width: '100%',
-    height: 250,
+    height: 300,
+
   },
   subContainer: {
     flex: 1,

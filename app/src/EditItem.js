@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, ActivityIndicator, View, TextInput} from 'react-native';
+import { Picker, Image, StyleSheet, ScrollView, ActivityIndicator, View, TextInput} from 'react-native';
 import { Button } from 'react-native-elements';
 import firebase from 'react-native-firebase';
+import ImagePicker from 'react-native-image-picker';
+
+const options = {
+  title: 'Select a photo'
+};
 
 export default class EditItem extends React.Component{
 
@@ -11,6 +16,7 @@ export default class EditItem extends React.Component{
 
   constructor() {
     super();
+    this.categoryData = ["Select Category", "Text Book/Notes", "Groceries", "Fashion", "Car", "Furniture", "Health & Beauty"]
     this.state = {
       key: '',
       isLoading: true,
@@ -18,7 +24,56 @@ export default class EditItem extends React.Component{
       description: '',
       category: '',
       price: '',
+      url: '',
+      user: '',
     };
+  }
+
+  categoryList = () => {
+    return (this.categoryData.map( (x, i) => {
+      return( <Picker.Item label={x} key={i} value={x} />)
+    }));
+  }
+
+  choosePhoto= () => {
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        const fileName = response.fileName + firebase.auth().currentUser.uid;
+        const imageRef = firebase.storage().ref('/images/').child(fileName);
+        imageRef.put(response.uri,{contentType:'image/jpeg'})
+
+        .then(()=>{
+          return imageRef.getDownloadURL()
+        })
+        .then((url)=>{
+          this.setPath(url)
+        });
+
+        this.setState({
+          imageSource: source,
+          imageFileName: fileName,
+        });
+
+      }
+    });
+  }
+
+  setPath= (url) => {
+    this.setState({
+      url:url
+    })
+    console.log("url uploaded", this.state.url);
   }
 
   componentDidMount() {
@@ -33,6 +88,8 @@ export default class EditItem extends React.Component{
           description: item.description,
           category: item.category,
           price: item.price,
+          url: item.url,
+          user: item.user,
           isLoading: false
         });
       } else {
@@ -57,6 +114,10 @@ export default class EditItem extends React.Component{
       name: this.state.name,
       description: this.state.description,
       category: this.state.category,
+      price: this.state.price,
+      url: this.state.url,
+      user: this.state.user,
+      timestamp: this.state.timestamp,
     }).then((docRef) => {
       this.setState({
         key: '',
@@ -64,6 +125,7 @@ export default class EditItem extends React.Component{
         description: '',
         category: '',
         price: '',
+        url: '',
         isLoading: false,
       });
       this.props.navigation.navigate('MyAccount');
@@ -96,6 +158,10 @@ export default class EditItem extends React.Component{
     }
     return (
       <ScrollView style={styles.container}>
+        <View>
+          <Image source={{uri:this.state.url}} style={{width:'100%',height: 200, margin: 10}}/>
+          <Button title="Select Image" onPress={this.choosePhoto}/>
+        </View>
         <View style={styles.subContainer}>
           <TextInput
               placeholder={'Name'}
@@ -113,11 +179,11 @@ export default class EditItem extends React.Component{
           />
         </View>
         <View style={styles.subContainer}>
-          <TextInput
-              placeholder={'Category'}
-              value={this.state.category}
-              onChangeText={(text) => this.updateTextInput(text, 'category')}
-          />
+          <Picker
+            selectedValue={this.state.selectedCategory}
+            onValueChange={ (value) => ( this.setState({selectedCategory : value}) )}>
+            { this.categoryList() }
+          </Picker>
         </View>
         <View style={styles.subContainer}>
           <TextInput
@@ -126,10 +192,9 @@ export default class EditItem extends React.Component{
               onChangeText={(text) => this.updateTextInput(text, 'price')}
           />
         </View>
-        <View style={styles.button}>
+        <View style={styles.subcontainer}>
           <Button
             large
-            leftIcon={{name: 'update'}}
             title='Update'
             onPress={() => this.updateBoard()} />
         </View>
@@ -158,5 +223,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  button: {
+    marginTop: 20,
+    borderRadius: 2
+  },
 })

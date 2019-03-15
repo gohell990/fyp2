@@ -34,12 +34,12 @@ export default createStackNavigator({
   initialRouteName: 'Login',
   navigationOptions:{
     headerStyle:{
-      backgroundColor: '#a80000',
+      backgroundColor: '#191970',
     },
     headerTintColor:'#fff',
     headerTitleStyle:{
       fontWeight: 'bold',
     },
   },
-  headerMode: 'none',
+
 });
