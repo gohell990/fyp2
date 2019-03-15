@@ -24,7 +24,7 @@ export default class MyAccountScreen extends React.Component{
     const items = [];
 
     querySnapshot.forEach((doc) => {
-      const { name, description, category, price, url } = doc.data();
+      const { name, description, category, price, url, user } = doc.data();
       items.push({
         key: doc.id,
         doc,
@@ -33,6 +33,7 @@ export default class MyAccountScreen extends React.Component{
         category,
         price,
         url,
+        user,
       });
     });
     this.setState({
@@ -43,7 +44,7 @@ export default class MyAccountScreen extends React.Component{
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    const {currentUser} = firebase.auth()
+    const currentUser = firebase.auth().currentUser.uid
     this.setState({currentUser})
   }
 
@@ -61,64 +62,82 @@ export default class MyAccountScreen extends React.Component{
 
   render(){
     const {currentUser} = this.state
-    return(
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={{justifyContent:'center', alignItems:'center'}}>
-          You are using {currentUser && currentUser.email}!
-        </Text>
-        <FlatList
-          data={this.state.items}
-          showsVerticalScrollIndicator= {true}
-          renderItem={({item}) =>
-              <TouchableHighlight
-                onPress={() => {
-                  this.props.navigation.navigate('ItemDetails', {
-                    itemkey: `${JSON.stringify(item.key)}`,
-                  });
-                }}
-              >
-                <View style={styles.item}>
-                  <Image source={{uri:`${item.url}`}}
-                      style={styles.image}/>
-                  <View style={styles.itemDetails}>
-                    <Text numberOfLines={1} style={styles.itemTitle}>{item.name}</Text>
-                    <Text style={styles.itemTitle}>RM {item.price}</Text>
-                    <Text style={styles.itemSubtitle}>{item.category}</Text>
+    if (currentUser == this.state.items.user){
+      return(
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={{justifyContent:'center', alignItems:'center'}}>
+            Hi {currentUser && currentUser.email}!
+          </Text>
+          <FlatList
+            data={this.state.items}
+            showsVerticalScrollIndicator= {true}
+            renderItem={({item}) =>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.props.navigation.navigate('ItemDetails', {
+                      itemkey: `${JSON.stringify(item.key)}`,
+                    });
+                  }}
+                >
+                  <View style={styles.item}>
+                    <Image source={{uri:`${item.url}`}}
+                        style={styles.image}/>
+                    <View style={styles.itemDetails}>
+                      <Text numberOfLines={1} style={styles.itemTitle}>{item.name}</Text>
+                      <Text style={styles.itemTitle}>RM {item.price}</Text>
+                      <Text style={styles.itemSubtitle}>{item.category}</Text>
+                    </View>
                   </View>
-                </View>
-              </TouchableHighlight>
+                </TouchableHighlight>
 
-          }
-          keyExtractor={(item) => {item.key.toString()}}
-        />
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <Button title="Logout" onPress={this.handleLogout}
-              icon = {
-                <Icon name="sign-out" size={20} style={styles.icon}/>
-              }
-            />
+            }
+            keyExtractor={(item) => {item.key.toString()}}
+          />
+          <View style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Button title="Logout" onPress={this.handleLogout}
+                icon = {
+                  <Icon name="sign-out" size={20} style={styles.icon}/>
+                }
+              />
+            </View>
+            <View style={styles.button}>
+              <Button
+                icon = {
+                  <Icon name="home" size={20} style={styles.icon}/>
+                }
+                title="Home"
+                onPress={()=>this.props.navigation.navigate('Main')}
+              />
+            </View>
+            <View style={styles.button}>
+              <Button title="Upload Item" onPress={()=>this.props.navigation.navigate('UploadItem')}
+                icon = {
+                  <Icon name="upload" size={20} style={styles.icon}/>
+                }
+              />
+            </View>
+
+          </View>
+        </ScrollView>
+      );
+    }else {
+      return(
+        <View style={styles.container}>
+          <View style={styles.notice}>
+            <Text style={{fontWeight: 'bold', fontSize: 25}}> Seem like you don't have any item</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 25}}> uploaded yet! </Text>
           </View>
           <View style={styles.button}>
-            <Button
-              icon = {
-                <Icon name="home" size={20} style={styles.icon}/>
-              }
-              title="Home"
-              onPress={()=>this.props.navigation.navigate('Main')}
-            />
-          </View>
-          <View style={styles.button}>
-            <Button title="Upload Item" onPress={()=>this.props.navigation.navigate('UploadItem')}
+            <Button title="Upload Item Now" onPress={()=>this.props.navigation.navigate('UploadItem')}
               icon = {
                 <Icon name="upload" size={20} style={styles.icon}/>
               }
             />
           </View>
-
         </View>
-      </ScrollView>
-    );
+      );
+    }
   }
 }
 
@@ -130,6 +149,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     alignItems: 'center',
+  },
+  notice: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+
   },
   button: {
     justifyContent: 'flex-end',

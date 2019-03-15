@@ -93,15 +93,22 @@ export default class UploadItem extends React.Component{
 
   saveBoard() {
 
-    this.setState({
-      isLoading: true,
-    });
-    if (this.state.selectedCategory == null || this.state.name == '' ||
-    this.state.imageUrl == '' || parseFloat(this.state.price) == 0 ||
-    parseFloat(this.state.price) < 0 ){
-      Alert.alert("Invalid Input");
-      this.props.navigation.navigate()
+    if (this.state.imageUrl == ''){
+      Alert.alert("Invalid image format");
+    }
+    else if (this.state.name == '') {
+      Alert.alert("Invalid name");
+    }
+    else if (this.state.selectedCategory == null){
+      Alert.alert("Please select a category");
+    }
+    else if (parseFloat(this.state.price) <= 0 ){
+      Alert.alert("Invalid price input");
+
     }else {
+      this.setState({
+        isLoading: true,
+      });
       this.ref.add({
         name: this.state.name,
         description: this.state.description,

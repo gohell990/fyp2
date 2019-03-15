@@ -105,38 +105,53 @@ export default class EditItem extends React.Component{
   }
 
   updateBoard() {
-    this.setState({
-      isLoading: true,
-    });
-    const { navigation } = this.props;
-    const updateRef = firebase.firestore().collection('Items').doc(this.state.key);
-    updateRef.set({
-      name: this.state.name,
-      description: this.state.description,
-      category: this.state.category,
-      price: this.state.price,
-      url: this.state.url,
-      user: this.state.user,
-      timestamp: this.state.timestamp,
-    }).then((docRef) => {
-      this.setState({
-        key: '',
-        name: '',
-        description: '',
-        category: '',
-        price: '',
-        url: '',
-        isLoading: false,
-      });
-      this.props.navigation.navigate('MyAccount');
+    if (this.state.imageUrl == ''){
+      Alert.alert("Invalid image format");
+    }
+    else if (this.state.name == '') {
+      Alert.alert("Invalid name");
+    }
+    else if (this.state.selectedCategory == null){
+      Alert.alert("Please select a category");
+    }
+    else if (parseFloat(this.state.price) <= 0 ){
+      Alert.alert("Invalid price input");
 
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
+    }
+    else {
       this.setState({
-        isLoading: false,
+        isLoading: true,
       });
-    });
+      const { navigation } = this.props;
+      const updateRef = firebase.firestore().collection('Items').doc(this.state.key);
+      updateRef.set({
+        name: this.state.name,
+        description: this.state.description,
+        category: this.state.category,
+        price: this.state.price,
+        url: this.state.url,
+        user: this.state.user,
+        timestamp: this.state.timestamp,
+      }).then((docRef) => {
+        this.setState({
+          key: '',
+          name: '',
+          description: '',
+          category: '',
+          price: '',
+          url: '',
+          isLoading: false,
+        });
+        this.props.navigation.navigate('MyAccount');
+
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+        this.setState({
+          isLoading: false,
+        });
+      });
+    }
   }
 
   showItem() {
