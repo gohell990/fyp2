@@ -27,7 +27,7 @@ export default class FilterPage extends React.Component{
   state = { currentUser: null }
 
   render(){
-    const {currentUser} = this.state
+    const currentUser = this.state
     const { search } = this.state;
     return(
       <ScrollView contentContainerStyle={styles.container}>

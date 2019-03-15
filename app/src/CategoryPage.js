@@ -77,6 +77,7 @@ export default class FilterPage extends React.Component{
                     <Text numberOfLines={1} style={styles.itemTitle}>{item.name}</Text>
                     <Text style={styles.itemTitle}>RM {item.price}</Text>
                     <Text style={styles.itemSubtitle}>{item.category}</Text>
+                    <Text style={styles.itemSubtitle}>{item.user}</Text>
                   </View>
                 </View>
               </TouchableHighlight>

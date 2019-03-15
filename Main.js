@@ -31,7 +31,7 @@ export default class Main extends React.Component {
     const items = [];
 
     querySnapshot.forEach((doc) => {
-      const { name, description, category, price, url } = doc.data();
+      const { name, description, category, price, url, user } = doc.data();
       items.push({
         key: doc.id,
         doc,
@@ -40,6 +40,7 @@ export default class Main extends React.Component {
         category,
         price,
         url,
+        user,
       });
     });
     this.setState({
@@ -57,7 +58,7 @@ export default class Main extends React.Component {
   state = { currentUser: null }
 
   render() {
-      const { currentUser } = this.state
+      const currentUser = firebase.auth().currentUser.email;
       const { search } = this.state;
       if(this.state.isLoading){
         return(
@@ -71,7 +72,7 @@ export default class Main extends React.Component {
 
             <ScrollView contentContainerStyle={styles.container}>
               <Text style={{justifyContent:'center', alignItems:'center'}}>
-                You are using {currentUser && currentUser.email}!
+                You are using {currentUser}!
               </Text>
               <SearchBar
                 platform='android'

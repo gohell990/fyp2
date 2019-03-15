@@ -49,7 +49,7 @@ export default class EditItem extends React.Component{
         const source = { uri: response.uri };
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        const fileName = response.fileName + firebase.auth().currentUser.uid;
+        const fileName = response.fileName + firebase.auth().currentUser.user;
         const imageRef = firebase.storage().ref('/images/').child(fileName);
         imageRef.put(response.uri,{contentType:'image/jpeg'})
 
@@ -130,7 +130,7 @@ export default class EditItem extends React.Component{
         category: this.state.category,
         price: this.state.price,
         url: this.state.url,
-        user: this.state.user,
+        user: firebase.auth().currentUser.email,
         timestamp: this.state.timestamp,
       }).then((docRef) => {
         this.setState({

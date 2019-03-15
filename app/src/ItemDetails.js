@@ -60,7 +60,7 @@ export default class ItemDetails extends React.Component{
         </View>
       )
     }
-    else if(firebase.auth().currentUser.uid == this.state.item.user){
+    else if(firebase.auth().currentUser.email == this.state.item.user){
       return (
         <ScrollView>
           <Card style={styles.container}>
@@ -80,6 +80,10 @@ export default class ItemDetails extends React.Component{
               <View style={styles.name}>
                 <Text> Category: </Text>
                 <Text style={styles.getItem}>{this.state.item.category}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Seller: </Text>
+                <Text style={styles.getItem}>{this.state.item.user}</Text>
               </View>
               <View style={styles.name}>
                 <Text> Description: </Text>
@@ -106,24 +110,28 @@ export default class ItemDetails extends React.Component{
         <ScrollView>
           <Card style={styles.container}>
             <View style={styles.subContainer}>
-              <View style={styles.name}>
+              <View>
                 <Image source={{uri:`${this.state.item.url}`}}
                   style={styles.image}/>
               </View>
-              <View style={styles.name}>
-                <Text> Name: </Text>
+              <View>
+                <Text style={styles.title}> Name: </Text>
                 <Text style={styles.getItem}>{this.state.item.name}</Text>
               </View>
-              <View style={styles.name}>
-                <Text> Price: </Text>
+              <View>
+                <Text style={styles.title}> Price: </Text>
                 <Text style={styles.getItem}>{this.state.item.price}</Text>
               </View>
-              <View style={styles.name}>
-                <Text> Category: </Text>
+              <View>
+                <Text style={styles.title}> Category: </Text>
                 <Text style={styles.getItem}>{this.state.item.category}</Text>
               </View>
-              <View style={styles.name}>
-                <Text> Description: </Text>
+              <View>
+                <Text style={styles.title}> Seller: </Text>
+                <Text style={styles.getItem}>{this.state.item.user}</Text>
+              </View>
+              <View>
+                <Text style={styles.title}> Description: </Text>
                 <Text style={styles.getItem}>{this.state.item.description}</Text>
               </View>
             </View>
@@ -139,8 +147,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20
   },
-  name: {
-    fontSize: 18,
+  title: {
+    fontSize: 20,
   },
   getItem:{
     fontSize: 20,

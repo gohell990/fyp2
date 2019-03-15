@@ -22,7 +22,7 @@ export default class MyAccountScreen extends React.Component{
 
   onCollectionUpdate = () => {
 
-      this.ref.where("user", "==", firebase.auth().currentUser.uid).get()
+      this.ref.where("user", "==", firebase.auth().currentUser.email).get()
       .then((querySnapshot) => {
       const items = [];
 
@@ -49,7 +49,7 @@ export default class MyAccountScreen extends React.Component{
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    const currentUser = firebase.auth().currentUser.uid
+    const currentUser = firebase.auth().currentUser.user
     this.setState({currentUser})
   }
 
@@ -67,42 +67,6 @@ export default class MyAccountScreen extends React.Component{
 
   render(){
     const {currentUser} = this.state
-    if (this.state.items == ''){
-      return(
-        <View style={styles.container}>
-          <View style={styles.notice}>
-            <Text style={{fontWeight: 'bold', fontSize: 25}}> Seem like you don't have any item</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 25}}> uploaded yet! </Text>
-          </View>
-          <View style={styles.upload}>
-            <Button title="Upload Item Now" onPress={()=>this.props.navigation.navigate('UploadItem')}
-              icon = {
-                <Icon name="upload" size={20} style={styles.icon}/>
-              }
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button title="Logout" onPress={this.handleLogout}
-                icon = {
-                  <Icon name="sign-out" size={20} style={styles.icon}/>
-                }
-              />
-            </View>
-            <View style={styles.button}>
-              <Button
-                icon = {
-                  <Icon name="cog" size={20} style={styles.icon}/>
-                }
-                title="Settings"
-                onPress={()=>this.props.navigation.navigate('Settings')}
-              />
-            </View>
-
-          </View>
-        </View>
-      );
-    }else{
       return(
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={{justifyContent:'center', alignItems:'center'}}>
@@ -126,6 +90,7 @@ export default class MyAccountScreen extends React.Component{
                       <Text numberOfLines={1} style={styles.itemTitle}>{item.name}</Text>
                       <Text style={styles.itemTitle}>RM {item.price}</Text>
                       <Text style={styles.itemSubtitle}>{item.category}</Text>
+                      <Text style={styles.itemSubtitle}>{item.user}</Text>
                     </View>
                   </View>
                 </TouchableHighlight>
@@ -161,7 +126,7 @@ export default class MyAccountScreen extends React.Component{
           </View>
         </ScrollView>
       );
-    }
+
   }
 }
 

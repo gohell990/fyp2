@@ -54,7 +54,7 @@ export default class UploadItem extends React.Component{
         const source = { uri: response.uri };
         // You can also display the image using data:
         // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        const fileName = response.fileName + firebase.auth().currentUser.uid;
+        const fileName = response.fileName + firebase.auth().currentUser.user;
         const imageRef = firebase.storage().ref('/images/').child(fileName);
         imageRef.put(response.uri,{contentType:'image/jpeg'})
 
@@ -116,7 +116,7 @@ export default class UploadItem extends React.Component{
         price: parseFloat(this.state.price),
         url: this.state.imageUrl,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        user: firebase.auth().currentUser.uid,
+        user: firebase.auth().currentUser.email,
       }).then((docRef) => {
         this.setState({
           name: '',
