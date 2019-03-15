@@ -24,42 +24,6 @@ export default class FilterPage extends React.Component{
     this.setState({ search });
   };
 
-  display = () => {
-    return (this.categoryData.map(function(key, val, array){
-      return key;
-  })); }
-
-  onCollectionUpdate = () => {
-
-      this.ref.where("user", "==", firebase.auth().currentUser.uid).get()
-      .then((querySnapshot) => {
-      const items = [];
-
-      querySnapshot.forEach((doc) => {
-        const { name, description, category, price, url, user } = doc.data();
-        items.push({
-          key: doc.id,
-          doc,
-          name,
-          description,
-          category,
-          price,
-          url,
-          user,
-        });
-      });
-      this.setState({
-        items,
-        isLoading: false,
-     });
-   })
- }
-  componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    const currentUser = firebase.auth().currentUser.uid
-    this.setState({currentUser})
-  }
-
   state = { currentUser: null }
 
   render(){
@@ -67,9 +31,6 @@ export default class FilterPage extends React.Component{
     const { search } = this.state;
     return(
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={{justifyContent:'center', alignItems:'center'}}>
-          Hi {currentUser && currentUser.email}!
-        </Text>
         <SearchBar
           platform='android'
           containerStyle={styles.searchBar}
@@ -81,6 +42,7 @@ export default class FilterPage extends React.Component{
           showsVerticalScrollIndicator= {true}
           data={[{key: 'Text Book/Notes'},
                 {key: 'Groceries'},
+                {key: 'Electronic'},
                 {key: 'Fashion'},
                 {key: 'Transportation'},
                 {key: 'Furniture'},
@@ -89,7 +51,7 @@ export default class FilterPage extends React.Component{
           renderItem={({item}) => <TouchableHighlight
             onPress={() => {
               this.props.navigation.navigate('CategoryPage', {
-                itemkey: `${JSON.stringify(item.key)}`,
+                searchValue: `${JSON.stringify(item.key)}`,
               });
             }}
           >
@@ -136,6 +98,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'black',
   },
   buttonContainer: {
     flex: 1,

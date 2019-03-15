@@ -16,7 +16,7 @@ export default class MyAccountScreen extends React.Component{
     this.state = {
       isLoading: true,
       items: [],
-      
+
     };
   }
 
@@ -46,6 +46,7 @@ export default class MyAccountScreen extends React.Component{
      });
    })
  }
+
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
     const currentUser = firebase.auth().currentUser.uid

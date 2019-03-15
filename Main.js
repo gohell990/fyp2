@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, TouchableHighlight, ActivityIndicator, ScrollView, StyleSheet, Image, Text, View } from 'react-native';
 import firebase from 'react-native-firebase';
-import { Button} from 'react-native-elements';
+import { Button, SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import MyAccountScreen from './app/src/MyAccountScreen';
@@ -18,9 +18,14 @@ export default class Main extends React.Component {
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
-      items: []
+      items: [],
+      search: '',
     };
   }
+
+  updateSearch = search => {
+    this.setState({ search });
+  };
 
   onCollectionUpdate = (querySnapshot) => {
     const items = [];
@@ -53,6 +58,7 @@ export default class Main extends React.Component {
 
   render() {
       const { currentUser } = this.state
+      const { search } = this.state;
       if(this.state.isLoading){
         return(
           <View style={styles.activity}>
@@ -67,6 +73,12 @@ export default class Main extends React.Component {
               <Text style={{justifyContent:'center', alignItems:'center'}}>
                 You are using {currentUser && currentUser.email}!
               </Text>
+              <SearchBar
+                platform='android'
+                containerStyle={styles.searchBar}
+                onChangeText={this.updateSearch}
+                value={search}
+                placeholder='Type Here...' />
               <FlatList
                 data={this.state.items}
                 showsVerticalScrollIndicator= {true}
@@ -104,10 +116,10 @@ export default class Main extends React.Component {
                 <View style={styles.button}>
                   <Button
                     icon = {
-                      <Icon name="cog" size={20} style={styles.icon}/>
+                      <Icon name="home" size={20} style={styles.icon}/>
                     }
-                    title="Settings"
-                    onPress={()=>this.props.navigation.navigate('Settings')}
+                    title="Home"
+                    onPress={()=>this.props.navigation.navigate('Main')}
                   />
                 </View>
                 <View style={styles.button}>

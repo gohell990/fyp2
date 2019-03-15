@@ -16,7 +16,7 @@ export default class EditItem extends React.Component{
 
   constructor() {
     super();
-    this.categoryData = ["Select Category", "Text Book/Notes", "Groceries", "Fashion", "Transportation", "Furniture", "Health & Beauty", "Others"]
+    this.categoryData = ["Select Category", "Text Book/Notes", "Electronic", "Groceries", "Fashion", "Transportation", "Furniture", "Health & Beauty", "Others"]
     this.state = {
       key: '',
       isLoading: true,
