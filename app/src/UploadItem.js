@@ -17,7 +17,7 @@ export default class UploadItem extends React.Component{
   constructor() {
     super();
     this.ref = firebase.firestore().collection('Items');
-    this.categoryData = ["Select Category", "Text Book/Notes", "Groceries", "Fashion", "Car", "Furniture", "Health & Beauty"]
+    this.categoryData = ["Select Category", "Text Book/Notes", "Groceries", "Fashion", "Transportation", "Furniture", "Health & Beauty", "Others"]
     this.state = {
       name: '',
       description: '',

@@ -98,6 +98,7 @@ export default class Main extends React.Component {
                     icon = {
                       <Icon name="filter" size={20} style={styles.icon}/>
                     }
+                    onPress={()=>this.props.navigation.navigate('FilterPage')}
                   />
                 </View>
                 <View style={styles.button}>

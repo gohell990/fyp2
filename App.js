@@ -11,6 +11,8 @@ import EditItem from './app/src/EditItem';
 import ShowItem from './app/src/ShowItem';
 import ItemDetails from './app/src/ItemDetails';
 import UploadItem from './app/src/UploadItem';
+import FilterPage from './app/src/FilterPage';
+import CategoryPage from './app/src/CategoryPage';
 
 export default createStackNavigator({
   Main:{ screen: Main },
@@ -30,6 +32,10 @@ export default createStackNavigator({
   ItemDetails: { screen: ItemDetails },
 
   UploadItem: { screen: UploadItem },
+
+  FilterPage: { screen: FilterPage },
+
+  CategoryPage: { screen: CategoryPage },
 }, {
   initialRouteName: 'Login',
   navigationOptions:{
