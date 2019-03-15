@@ -102,7 +102,7 @@ export default class UploadItem extends React.Component{
     else if (this.state.selectedCategory == null){
       Alert.alert("Please select a category");
     }
-    else if (parseFloat(this.state.price) <= 0 ){
+    else if (parseFloat(this.state.price) <= 0 || this.state.price == ''){
       Alert.alert("Invalid price input");
 
     }else {

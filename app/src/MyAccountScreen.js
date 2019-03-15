@@ -15,33 +15,37 @@ export default class MyAccountScreen extends React.Component{
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
-      items: []
-
+      items: [],
+      
     };
   }
 
-  onCollectionUpdate = (querySnapshot) => {
-    const items = [];
+  onCollectionUpdate = () => {
 
-    querySnapshot.forEach((doc) => {
-      const { name, description, category, price, url, user } = doc.data();
-      items.push({
-        key: doc.id,
-        doc,
-        name,
-        description,
-        category,
-        price,
-        url,
-        user,
+      this.ref.where("user", "==", firebase.auth().currentUser.uid).get()
+      .then((querySnapshot) => {
+      const items = [];
+
+      querySnapshot.forEach((doc) => {
+        const { name, description, category, price, url, user } = doc.data();
+        items.push({
+          key: doc.id,
+          doc,
+          name,
+          description,
+          category,
+          price,
+          url,
+          user,
+        });
       });
-    });
-    this.setState({
-      items,
-      isLoading: false,
-   });
-  }
+      this.setState({
+        items,
+        isLoading: false,
 
+     });
+   })
+ }
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
     const currentUser = firebase.auth().currentUser.uid
@@ -62,7 +66,42 @@ export default class MyAccountScreen extends React.Component{
 
   render(){
     const {currentUser} = this.state
-    if (currentUser == this.state.items.user){
+    if (this.state.items == ''){
+      return(
+        <View style={styles.container}>
+          <View style={styles.notice}>
+            <Text style={{fontWeight: 'bold', fontSize: 25}}> Seem like you don't have any item</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 25}}> uploaded yet! </Text>
+          </View>
+          <View style={styles.upload}>
+            <Button title="Upload Item Now" onPress={()=>this.props.navigation.navigate('UploadItem')}
+              icon = {
+                <Icon name="upload" size={20} style={styles.icon}/>
+              }
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Button title="Logout" onPress={this.handleLogout}
+                icon = {
+                  <Icon name="sign-out" size={20} style={styles.icon}/>
+                }
+              />
+            </View>
+            <View style={styles.button}>
+              <Button
+                icon = {
+                  <Icon name="cog" size={20} style={styles.icon}/>
+                }
+                title="Settings"
+                onPress={()=>this.props.navigation.navigate('Settings')}
+              />
+            </View>
+
+          </View>
+        </View>
+      );
+    }else{
       return(
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={{justifyContent:'center', alignItems:'center'}}>
@@ -121,22 +160,6 @@ export default class MyAccountScreen extends React.Component{
           </View>
         </ScrollView>
       );
-    }else {
-      return(
-        <View style={styles.container}>
-          <View style={styles.notice}>
-            <Text style={{fontWeight: 'bold', fontSize: 25}}> Seem like you don't have any item</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 25}}> uploaded yet! </Text>
-          </View>
-          <View style={styles.button}>
-            <Button title="Upload Item Now" onPress={()=>this.props.navigation.navigate('UploadItem')}
-              icon = {
-                <Icon name="upload" size={20} style={styles.icon}/>
-              }
-            />
-          </View>
-        </View>
-      );
     }
   }
 }
@@ -149,6 +172,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     alignItems: 'center',
+  },
+  upload: {
+    top: 200,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   notice: {
     flex: 1,

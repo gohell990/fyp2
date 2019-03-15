@@ -43,7 +43,7 @@ export default class ItemDetails extends React.Component{
       this.setState({
         isLoading: false
       });
-      navigation.navigate('ShowItem');
+      navigation.navigate('MyAccount');
     }).catch((error) => {
       console.error("Error removing document: ", error);
       this.setState({
