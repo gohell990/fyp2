@@ -100,9 +100,9 @@ export default class MyAccountScreen extends React.Component{
           />
           <View style={styles.buttonContainer}>
             <View style={styles.button}>
-              <Button title="Logout" onPress={this.handleLogout}
+              <Button title="Profile" onPress={()=>this.props.navigation.navigate("Profile")}
                 icon = {
-                  <Icon name="sign-out" size={20} style={styles.icon}/>
+                  <Icon name="book" size={20} style={styles.icon}/>
                 }
               />
             </View>

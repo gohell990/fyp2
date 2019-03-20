@@ -14,11 +14,23 @@ export default class SignUpView extends Component {
 
   handleSignUp = () => {
     firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
+
+    if (firebase.auth().currentUser) {
+      userId = firebase.auth().currentUser.uid;
+    if (userId) {
+        firebase.firestore().collection('User').add({
+            name: this.state.fullName,
+            email: this.state.email,
+
+
+        })
+      }
+    }
       .then(()=>this.props.navigation.navigate('Main'))
       .catch(error => this.setState({errorMessage: error.message}))
     console.log('handleSignUp')
   }
-  
+
   constructor(props) {
     super(props);
     state = {
@@ -32,6 +44,9 @@ export default class SignUpView extends Component {
     Alert.alert("Alert", "Button pressed "+viewId);
   }
 
+  componentDidMount(){
+
+  }
   render() {
     return (
       <View style={styles.container}>

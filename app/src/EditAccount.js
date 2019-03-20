@@ -8,10 +8,10 @@ const options = {
   title: 'Select a photo'
 };
 
-export default class EditItem extends React.Component{
+export default class EditAccount extends React.Component{
 
   static navigationOptions = {
-    title: 'Edit Item',
+    title: 'Edit Board',
   };
 
   constructor() {

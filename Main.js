@@ -1,12 +1,13 @@
 import React from 'react';
 import { FlatList, TouchableHighlight, ActivityIndicator, ScrollView, StyleSheet, Image, Text, View } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 import firebase from 'react-native-firebase';
 import { Button, SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import MyAccountScreen from './app/src/MyAccountScreen';
 
-import SettingsScreen from './app/src/SettingsScreen';
+import Profile from './app/src/Profile';
 
 export default class Main extends React.Component {
 
@@ -20,7 +21,31 @@ export default class Main extends React.Component {
       isLoading: true,
       items: [],
       search: '',
+      messages: [],
     };
+  }
+
+  componentWillMount() {
+    this.setState({
+      messages: [
+        {
+          _id: 1,
+          text: 'Hello developer',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
+        },
+      ],
+    })
+  }
+
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
   }
 
   updateSearch = search => {
@@ -74,12 +99,31 @@ export default class Main extends React.Component {
               <Text style={{justifyContent:'center', alignItems:'center'}}>
                 You are using {currentUser}!
               </Text>
-              <SearchBar
-                platform='android'
-                containerStyle={styles.searchBar}
-                onChangeText={this.updateSearch}
-                value={search}
-                placeholder='Type Here...' />
+
+              <View style={{flexDirection:'row',top:2, width: '100%'}}>
+                <View style={{flex:5}}>
+                  <SearchBar
+                    platform='android'
+                    containerStyle={styles.searchBar}
+                    onChangeText={this.updateSearch}
+                    value={search}
+                    placeholder='Type Here...' />
+                </View>
+                <View style={{flex:1}}>
+                  <Button
+                    icon = {
+                      <Icon name="search" size={20}/>
+                    }
+                    onPress={ () => {
+                      this.props.navigation.navigate('Search', {
+                        search: `${JSON.stringify(this.state.search)}`,
+                      });
+                      this.setState({search:''})
+                    }}
+                    buttonStyle={{height: 65}}
+                  />
+                </View>
+              </View>
               <FlatList
                 data={this.state.items}
                 showsVerticalScrollIndicator= {true}

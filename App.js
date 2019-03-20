@@ -5,7 +5,6 @@ import {
 import SignUp from './SignUp';
 import Login from './Login';
 import Main from './Main';
-import SettingsScreen from './app/src/SettingsScreen';
 import MyAccountScreen from './app/src/MyAccountScreen';
 import EditItem from './app/src/EditItem';
 import ShowItem from './app/src/ShowItem';
@@ -13,6 +12,9 @@ import ItemDetails from './app/src/ItemDetails';
 import UploadItem from './app/src/UploadItem';
 import FilterPage from './app/src/FilterPage';
 import CategoryPage from './app/src/CategoryPage';
+import Profile from './app/src/Profile';
+import EditAccount from './app/src/EditAccount';
+import Search from './app/src/Search';
 
 export default createStackNavigator({
   Main:{ screen: Main },
@@ -20,8 +22,6 @@ export default createStackNavigator({
   Login:{ screen: Login },
 
   SignUp:{ screen: SignUp },
-
-  Settings: { screen: SettingsScreen },
 
   MyAccount: { screen: MyAccountScreen },
 
@@ -36,6 +36,12 @@ export default createStackNavigator({
   FilterPage: { screen: FilterPage },
 
   CategoryPage: { screen: CategoryPage },
+
+  Profile: { screen: Profile },
+
+  EditAccount: { screen: EditAccount },
+
+  Search: { screen: Search },
 }, {
   initialRouteName: 'Login',
   navigationOptions:{
