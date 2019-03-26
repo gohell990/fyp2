@@ -11,25 +11,30 @@ const options = {
 export default class EditAccount extends React.Component{
 
   static navigationOptions = {
-    title: 'Edit Board',
+    title: 'Edit Account',
   };
 
   constructor() {
     super();
     this.categoryData = ["Select Category", "Text Book/Notes", "Electronic", "Groceries", "Fashion", "Transportation", "Furniture", "Health & Beauty", "Others"]
+    this.genderData = ["Select Gender", "male", "female"],
     this.state = {
       key: '',
       isLoading: true,
       name: '',
-      description: '',
-      category: '',
-      price: '',
+      gender: '',
       url: '',
-      user: '',
+      email: '',
     };
   }
 
   categoryList = () => {
+    return (this.categoryData.map( (x, i) => {
+      return( <Picker.Item label={x} key={i} value={x} />)
+    }));
+  }
+
+  genderList = () => {
     return (this.categoryData.map( (x, i) => {
       return( <Picker.Item label={x} key={i} value={x} />)
     }));
@@ -78,18 +83,16 @@ export default class EditAccount extends React.Component{
 
   componentDidMount() {
     const { navigation } = this.props;
-    const ref = firebase.firestore().collection('Items').doc(JSON.parse(navigation.getParam('itemkey')));
+    const ref = firebase.firestore().collection('Users').doc(JSON.parse(navigation.getParam('editAccount')));
     ref.get().then((doc) => {
       if (doc.exists) {
-        const item = doc.data();
+        const user = doc.data();
         this.setState({
           key: doc.id,
-          name: item.name,
-          description: item.description,
-          category: item.category,
-          price: item.price,
-          url: item.url,
-          user: item.user,
+          name: user.name,
+          gender: user.gender,
+          url: user.url,
+          email: user.email,
           isLoading: false
         });
       } else {
@@ -123,23 +126,20 @@ export default class EditAccount extends React.Component{
         isLoading: true,
       });
       const { navigation } = this.props;
-      const updateRef = firebase.firestore().collection('Items').doc(this.state.key);
+      const updateRef = firebase.firestore().collection('Users').doc(this.state.key);
       updateRef.set({
         name: this.state.name,
-        description: this.state.description,
-        category: this.state.category,
-        price: this.state.price,
+        gender: this.state.gender,
         url: this.state.url,
-        user: firebase.auth().currentUser.email,
+        email: firebase.auth().currentUser.email,
         timestamp: this.state.timestamp,
       }).then((docRef) => {
         this.setState({
           key: '',
           name: '',
-          description: '',
-          category: '',
-          price: '',
+          gender: '',
           url: '',
+          email: '',
           isLoading: false,
         });
         this.props.navigation.navigate('MyAccount');

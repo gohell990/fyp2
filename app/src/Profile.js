@@ -38,16 +38,14 @@ export default class Profile extends React.Component{
     const userData = [];
 
     querySnapshot.forEach((doc) => {
-      const { name, address, picture, email, gender, birthday } = doc.data();
+      const { name, gender, email, url} = doc.data();
       userData.push({
         key: doc.id,
         doc,
         name,
-        address,
-        picture,
-        email,
         gender,
-        birthday,
+        url,
+        email,
         });
       });
       this.setState({
@@ -87,7 +85,9 @@ export default class Profile extends React.Component{
                   icon = {
                     <Icon name="edit" size={20} style={styles.icon}/>
                   }
-                  onPress={()=>this.props.navigation.navigate('EditAccount')}
+                  onPress={()=>{this.props.navigation.navigate('EditAccount', {
+                    editAccount: `${JSON.stringify(this.state.userData.key)}`});
+                  }}
                 />
               </View>
               <View style={styles.button}>
@@ -129,7 +129,9 @@ export default class Profile extends React.Component{
                   icon = {
                     <Icon name="edit" size={20} style={styles.icon}/>
                   }
-                  onPress={()=>this.props.navigation.navigate('EditAccount')}
+                  onPress={()=>{this.props.navigation.navigate('EditAccount', {
+                    editAccount: `${JSON.stringify(this.state.userData.key)}`});
+                  }}
                 />
               </View>
               <View style={styles.button}>

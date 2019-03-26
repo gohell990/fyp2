@@ -134,6 +134,13 @@ export default class ItemDetails extends React.Component{
                 <Text style={styles.title}> Description: </Text>
                 <Text style={styles.getItem}>{this.state.item.description}</Text>
               </View>
+              <View>
+                <Button title="Chat Now" onPress={() => {
+                  this.props.navigation.navigate('ChatScreen', {
+                    chatItem: `${JSON.stringify(this.state.item.name)}`,
+                  });
+                }}/>
+              </View>
             </View>
           </Card>
         </ScrollView>

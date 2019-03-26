@@ -15,6 +15,7 @@ import CategoryPage from './app/src/CategoryPage';
 import Profile from './app/src/Profile';
 import EditAccount from './app/src/EditAccount';
 import Search from './app/src/Search';
+import ChatScreen from './app/src/ChatScreen';
 
 export default createStackNavigator({
   Main:{ screen: Main },
@@ -42,6 +43,8 @@ export default createStackNavigator({
   EditAccount: { screen: EditAccount },
 
   Search: { screen: Search },
+
+  ChatScreen : { screen: ChatScreen },
 }, {
   initialRouteName: 'Login',
   navigationOptions:{

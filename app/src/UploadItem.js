@@ -126,6 +126,7 @@ export default class UploadItem extends React.Component{
           imageUrl: '',
           isLoading: false,
         });
+        Alert.alert("Item has successfully uploaded");
         this.props.navigation.goBack();
       })
 

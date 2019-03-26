@@ -31,9 +31,10 @@ export default class Search extends React.Component {
     .catch(error => this.setState({errorMessage:error.message}))
     console.log('handleLogout')
   }
+
   constructor(){
     super();
-    this.ref = firebase.firestore().collection('items');
+    this.ref = firebase.firestore().collection('Items');
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
@@ -48,17 +49,16 @@ export default class Search extends React.Component {
     .then((querySnapshot) => {
       const items = [];
       querySnapshot.forEach((doc) => {
-        const{name,category, description,imageFileName,point,service,user,url} = doc.data();
+        const{name,category, description, user, price, url} = doc.data();
         items.push({
           key:doc.id,
           doc,
           name,
           category,
           description,
-          imageFileName,
           url,
-          point,
-          service,
+          price,
+          user,
         });
       });
       this.setState({
@@ -107,7 +107,8 @@ export default class Search extends React.Component {
                 <View style={styles.itemDetails}>
                 <Text numberOfLines={1} style={styles.itemTitle}>{ item.name }</Text>
                 <Text style={styles.itemSubtitle}>{ item.category }</Text>
-                <Text numberOfLines={1}>{item.description}</Text>
+                <Text numberOfLines={2} style={{fontSize:20}}>{item.description}</Text>
+                <Text style={{fontSize:15}}> {item.user}</Text>
                 </View>
               </View>
             </TouchableHighlight>
@@ -198,6 +199,5 @@ const styles = StyleSheet.create({
   },
   itemSubtitle: {
     fontSize: 18,
-    marginBottom:20
   },
 })

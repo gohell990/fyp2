@@ -12,11 +12,12 @@ export default class MyAccountScreen extends React.Component{
   constructor() {
     super();
     this.ref = firebase.firestore().collection('Items');
+    this.userRef = firebase.firestore().collection('Items');
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
       items: [],
-
+      users: [],
     };
   }
 
@@ -24,28 +25,28 @@ export default class MyAccountScreen extends React.Component{
 
       this.ref.where("user", "==", firebase.auth().currentUser.email).get()
       .then((querySnapshot) => {
-      const items = [];
+        const items = [];
 
-      querySnapshot.forEach((doc) => {
-        const { name, description, category, price, url, user } = doc.data();
-        items.push({
-          key: doc.id,
-          doc,
-          name,
-          description,
-          category,
-          price,
-          url,
-          user,
+        querySnapshot.forEach((doc) => {
+          const { name, description, category, price, url, user } = doc.data();
+          items.push({
+            key: doc.id,
+            doc,
+            name,
+            description,
+            category,
+            price,
+            url,
+            user,
+          });
         });
-      });
-      this.setState({
-        items,
-        isLoading: false,
+        this.setState({
+          items,
+          isLoading: false,
 
-     });
-   })
- }
+        });
+    })
+  }
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
