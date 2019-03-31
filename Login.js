@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, StyleSheet, Text, TextInput, View, TouchableHighlight , Button } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, View, TouchableHighlight , Button, Image} from 'react-native';
 
 import firebase from 'react-native-firebase';
 
@@ -28,7 +28,8 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Login</Text>
+        <Image source={require('./app/image/Logo.jpg')} style={{height:300, width: '70%'}}/>
+        <Text style={{fontWeight: 'bold'}}>Login</Text>
 
         <TextInput
           style={styles.textInput}
@@ -45,17 +46,14 @@ export default class Login extends React.Component {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-
-        <TouchableHighlight onPress={()=> this.handleLogin()}
-          style= {styles.button}>
-          <Text> Login </Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight onPress={()=> this.props.navigation.navigate('SignUp')}
-          style={styles.button}>
-          <Text> Don't have account yet? SignUp Now! </Text>
-        </TouchableHighlight>
-
+        <View style={{flex:1}}>
+          <View style={{marginTop:15}}>
+            <Button title="Login" style={styles.button} onPress={()=> this.handleLogin()}/>
+          </View>
+          <View style={{marginTop:15}}>
+            <Button title="Sign Up Now" style={styles.button} onPress={()=> this.props.navigation.navigate('SignUp')}/>
+          </View>
+        </View>
         {this.state.errorMessage &&
           <Text style={{ color: 'red' }}>
             {this.state.errorMessage}

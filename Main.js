@@ -6,7 +6,6 @@ import { Button, SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import MyAccountScreen from './app/src/MyAccountScreen';
-
 import Profile from './app/src/Profile';
 
 export default class Main extends React.Component {
@@ -83,7 +82,7 @@ export default class Main extends React.Component {
   state = { currentUser: null }
 
   render() {
-      const currentUser = firebase.auth().currentUser.email;
+
       const { search } = this.state;
       if(this.state.isLoading){
         return(
@@ -96,9 +95,6 @@ export default class Main extends React.Component {
         return (
 
             <ScrollView contentContainerStyle={styles.container}>
-              <Text style={{justifyContent:'center', alignItems:'center'}}>
-                You are using {currentUser}!
-              </Text>
 
               <View style={{flexDirection:'row',top:2, width: '100%'}}>
                 <View style={{flex:5}}>

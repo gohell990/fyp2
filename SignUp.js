@@ -1,15 +1,34 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Image} from 'react-native';
 import firebase from 'react-native-firebase';
-export default class SignUp extends React.Component {
-  state = { email: '', password: '', errorMessage: null }
 
-handleSignUp = () => {
-  firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
-    .then(()=>this.props.navigation.navigate('Main'))
-    .catch(error => this.setState({errorMessage: error.message}))
-  console.log('handleSignUp')
-}
+export default class SignUp extends React.Component {
+  state = { email: '', password: '', errorMessage: null, fullName: '', }
+
+  handleSignUp = () => {
+    if(this.state.email != '' && this.state.password != ''){
+      firebase.auth().createUserWithEmailAndPassword(this.state.email,this.state.password)
+      .then(()=>this.props.navigation.navigate('Main'))
+      .catch(error => this.setState({errorMessage: error.message}))
+
+      firebase.firestore().collection('Users').add({
+        email: this.state.email,
+        name: this.state.fullName,
+
+      })
+      .then((docRef) =>{
+        this.setState({
+          email: '',
+          password:'',
+        })
+      })
+
+
+    }
+    else { this.setState({errorMessage: 'Enter email and password to login'}) }
+
+    console.log('handleSignUp')
+  }
 
 constructor(props) {
   super(props);

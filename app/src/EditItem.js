@@ -158,7 +158,7 @@ export default class EditItem extends React.Component{
     var ref = firebase.database().ref("Items/id");
     ref.once("value")
     .then(function(snapshot) {
-      var key = snapshot.key; // "ada"
+      var key = snapshot.key; 
 
     });
   }

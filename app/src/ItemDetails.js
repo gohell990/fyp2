@@ -138,6 +138,7 @@ export default class ItemDetails extends React.Component{
                 <Button title="Chat Now" onPress={() => {
                   this.props.navigation.navigate('ChatScreen', {
                     chatItem: `${JSON.stringify(this.state.item.name)}`,
+                    sellerEmail: `${JSON.stringify(this.state.item.user)}`,
                   });
                 }}/>
               </View>

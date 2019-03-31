@@ -73,7 +73,9 @@ export default class Search extends React.Component {
     this.setState({currentUser})
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
+
   state = { currentUser: null }
+  
   render() {
     const { currentUser } = this.state
     if(this.state.isLoading){

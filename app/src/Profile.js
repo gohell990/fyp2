@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { TouchableHighlight, FlatList, Image, ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, TouchableHighlight, FlatList, Image, ScrollView, View, Text, StyleSheet } from 'react-native';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from 'react-native-firebase';
@@ -11,13 +11,14 @@ export default class Profile extends React.Component{
 
   constructor() {
     super();
-    this.ref = firebase.firestore().collection('User');
-    this.unsubscribe = null;
+    this.ref = firebase.firestore().collection('Users');
     this.state = {
-      isLoading: true,
+
       items: [],
-      userData: [],
       user: '',
+      name: '',
+      email: '',
+      gender: '',
     };
   }
 
@@ -31,98 +32,42 @@ export default class Profile extends React.Component{
     console.log('handleLogout')
   }
 
-  onCollectionUpdate = () => {
-
-    this.ref.where("user", "==", firebase.auth().currentUser.email).get()
-    .then((querySnapshot) => {
-    const userData = [];
-
-    querySnapshot.forEach((doc) => {
-      const { name, gender, email, url} = doc.data();
-      userData.push({
-        key: doc.id,
-        doc,
-        name,
-        gender,
-        url,
-        email,
-        });
-      });
-      this.setState({
-        userData,
-        isLoading: false,
-
-      });
-    })
-  }
 
   componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    const currentUser = firebase.auth().currentUser.user
-    this.setState({currentUser})
+
     const { navigation } = this.props;
+    console.log(firebase.auth().currentUser.email)
+    const ref = firebase.firestore().collection('Users');
+    ref.where("email", "==", firebase.auth().currentUser.email).get()
+
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        const user = doc.data()
+        this.setState({
+          email: user.email,
+          name: user.name,
+        })
+      })
+    });
 
   }
 
   render(){
-    if (this.state.userData.name == '' || this.state.userData.address == '' ||
-    this.state.userData.picture == '' || this.state.userData.gender == ''
-    || this.state.userData.birthday == ''){
-      return(
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.buttonContainer}>
-            <View style={styles.signout}>
-              <Button title="Logout" onPress={this.handleLogout}
-                icon = {
-                  <Icon name="sign-out" size={20} style={styles.icon}/>
-                }
-              />
-            </View>
-            <Text> No data record found! </Text>
-            <View style={styles.buttonContainer}>
-              <View style={styles.button}>
-                <Button title="Edit"
-                  icon = {
-                    <Icon name="edit" size={20} style={styles.icon}/>
-                  }
-                  onPress={()=>{this.props.navigation.navigate('EditAccount', {
-                    editAccount: `${JSON.stringify(this.state.userData.key)}`});
-                  }}
-                />
-              </View>
-              <View style={styles.button}>
-                <Button
-                  icon = {
-                    <Icon name="home" size={20} style={styles.icon}/>
-                  }
-                  title="Home"
-                  onPress={()=>this.props.navigation.navigate('Main')}
-                />
-              </View>
-              <View style={styles.button}>
-                <Button title="My Account" onPress={()=>this.props.navigation.navigate('MyAccount')}
-                  icon = {
-                    <Icon name="user-circle" size={20} style={styles.icon}/>
-                  }/>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      );
-    }else {
+
       return(
         <ScrollView contentContainerStyle={styles.container}>
           <Text> got data! </Text>
           <View style={styles.container}>
-            <View style={styles.signout}>
-              <Button title="Sign Out"
-                icon = {
-                  <Icon name="sign-out" size={20} style={styles.icon}/>
-                }
-                onPress={this.handleLogout}
-              />
-            </View>
             <Text> Profile Screen </Text>
+            <View style={styles.title}>
+              <Text> User Name: {this.state.name}</Text>
+            </View>
+            <View style={styles.title}>
+              <Text> Email: {this.state.email}</Text>
+            </View>
+            <View style={styles.title}>
+              <Text> Gender: {this.state.gender}</Text>
+            </View>
             <View style={styles.buttonContainer}>
               <View style={styles.button}>
                 <Button title="Edit"
@@ -144,17 +89,19 @@ export default class Profile extends React.Component{
                 />
               </View>
               <View style={styles.button}>
-                <Button title="My Account" onPress={()=>this.props.navigation.navigate('MyAccount')}
+                <Button title="Sign Out"
                   icon = {
-                    <Icon name="user-circle" size={20} style={styles.icon}/>
-                  }/>
+                    <Icon name="sign-out" size={20} style={styles.icon}/>
+                  }
+                  onPress={this.handleLogout}
+                />
               </View>
             </View>
           </View>
         </ScrollView>
       );
     }
-  }
+
 }
 
 const styles = StyleSheet.create({
@@ -182,5 +129,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-  }
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '500',
+    color: '#000',
+  },
 })

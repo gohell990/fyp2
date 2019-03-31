@@ -12,7 +12,7 @@ export default class MyAccountScreen extends React.Component{
   constructor() {
     super();
     this.ref = firebase.firestore().collection('Items');
-    this.userRef = firebase.firestore().collection('Items');
+    this.userRef = firebase.firestore().collection('Users');
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
@@ -50,8 +50,6 @@ export default class MyAccountScreen extends React.Component{
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    const currentUser = firebase.auth().currentUser.user
-    this.setState({currentUser})
   }
 
   state = { currentUser: null }
@@ -67,12 +65,8 @@ export default class MyAccountScreen extends React.Component{
   }
 
   render(){
-    const {currentUser} = this.state
       return(
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={{justifyContent:'center', alignItems:'center'}}>
-            Hi {currentUser && currentUser.email}!
-          </Text>
           <FlatList
             data={this.state.items}
             showsVerticalScrollIndicator= {true}
