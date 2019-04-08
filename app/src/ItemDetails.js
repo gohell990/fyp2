@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Button, Image, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { TouchableOpacity, ScrollView, Button, Image, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { List, ListItem, Text, Card } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 
@@ -27,6 +27,7 @@ export default class ItemDetails extends React.Component{
           key: doc.id,
           isLoading: false
         });
+        console.log("this is item key: " + this.state.key)
       } else {
         console.log("No such document!");
       }
@@ -105,6 +106,47 @@ export default class ItemDetails extends React.Component{
         </ScrollView>
       );
     }
+    else if(firebase.auth().currentUser.email == "admin@gmail.com"){
+      return (
+        <ScrollView>
+          <Card style={styles.container}>
+            <View style={styles.subContainer}>
+              <View>
+                <Image source={{uri:`${this.state.item.url}`}}
+                  style={styles.image}/>
+              </View>
+              <View style={styles.name}>
+                <Text> Name: </Text>
+                <Text style={styles.getItem}>{this.state.item.name}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Price: </Text>
+                <Text style={styles.getItem}>{this.state.item.price}</Text>
+              </View>
+              <View style={styles.name}>
+                <Text> Category: </Text>
+                <Text style={styles.getItem}>{this.state.item.category}</Text>
+              </View>
+              <TouchableOpacity onPress={()=>{ this.props.navigation.navigate('Profile', {
+                viewUser: `${JSON.stringify(this.state.item.user)}`,
+              })}}>
+                <View style={styles.button}>
+                  <Text style={styles.getItem}>{this.state.item.user}</Text>
+                </View>
+              </TouchableOpacity>
+              <View style={styles.name}>
+                <Text> Description: </Text>
+                <Text style={styles.getItem}>{this.state.item.description}</Text>
+              </View>
+              <View style={styles.button}>
+                <Button title="Delete Item" onPress={()=> this.deleteBoard(this.state.key)}
+                  />
+              </View>
+            </View>
+          </Card>
+        </ScrollView>
+      );
+    }
     else{
       return(
         <ScrollView>
@@ -127,8 +169,13 @@ export default class ItemDetails extends React.Component{
                 <Text style={styles.getItem}>{this.state.item.category}</Text>
               </View>
               <View>
-                <Text style={styles.title}> Seller: </Text>
-                <Text style={styles.getItem}>{this.state.item.user}</Text>
+                <TouchableOpacity onPress={()=>{ this.props.navigation.navigate('Profile', {
+                  viewUser: `${JSON.stringify(this.state.item.user)}`,
+                })}}>
+                  <View style={styles.button}>
+                    <Text style={styles.getItem}>{this.state.item.user}</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
               <View>
                 <Text style={styles.title}> Description: </Text>
@@ -139,6 +186,7 @@ export default class ItemDetails extends React.Component{
                   this.props.navigation.navigate('ChatScreen', {
                     chatItem: `${JSON.stringify(this.state.item.name)}`,
                     sellerEmail: `${JSON.stringify(this.state.item.user)}`,
+                    itemKey: `${JSON.stringify(this.state.key)}`,
                   });
                 }}/>
               </View>

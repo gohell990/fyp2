@@ -14,11 +14,12 @@ export default class Profile extends React.Component{
     this.ref = firebase.firestore().collection('Users');
     this.state = {
 
-      items: [],
       user: '',
       name: '',
       email: '',
       gender: '',
+      viewName: '',
+      viewEmail: '',
     };
   }
 
@@ -37,6 +38,7 @@ export default class Profile extends React.Component{
 
     const { navigation } = this.props;
     console.log(firebase.auth().currentUser.email)
+
     const ref = firebase.firestore().collection('Users');
     ref.where("email", "==", firebase.auth().currentUser.email).get()
 
@@ -50,10 +52,64 @@ export default class Profile extends React.Component{
       })
     });
 
+    ref.where("email", "==", JSON.parse(navigation.getParam('viewUser'))).get()
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        const viewUser = doc.data()
+        this.setState({
+          viewEmail: viewUser.email,
+          viewName: viewUser.name,
+        })
+
+        console.log("ViewUser item: " + this.state.viewEmail + "  " + this.state.viewName)
+      })
+    });
   }
 
   render(){
+    const {navigation} = this.props;
 
+    if (this.ref.where("email", "==", this.state.viewEmail) &&
+    this.ref.where("email", "!=", firebase.auth().currentUser.email)){
+      return(
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text> View User Profile Here! </Text>
+          <View style={styles.container}>
+            <Text> Profile Screen </Text>
+            <View style={styles.title}>
+              <Text> User Name: {this.state.viewName}</Text>
+            </View>
+            <View style={styles.title}>
+              <Text> Email: {this.state.viewEmail}</Text>
+            </View>
+            <View style={styles.title}>
+              <Text> Gender: </Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <View style={styles.button}>
+                <Button
+                  icon = {
+                    <Icon name="home" size={20} style={styles.icon}/>
+                  }
+                  title="Home"
+                  onPress={()=>this.props.navigation.navigate('Main')}
+                />
+              </View>
+              <View style={styles.button}>
+                <Button title="Sign Out"
+                  icon = {
+                    <Icon name="sign-out" size={20} style={styles.icon}/>
+                  }
+                  onPress={this.handleLogout}
+                />
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      );
+    }
+    else if (this.ref.where("email", "==", firebase.auth().currentUser.email) &&
+        this.ref.where("email", "!=", JSON.parse(navigation.getParam('viewUser')))) {
       return(
         <ScrollView contentContainerStyle={styles.container}>
           <Text> got data! </Text>
@@ -101,7 +157,7 @@ export default class Profile extends React.Component{
         </ScrollView>
       );
     }
-
+  }
 }
 
 const styles = StyleSheet.create({

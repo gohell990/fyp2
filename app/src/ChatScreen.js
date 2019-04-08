@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ToastAndroid, TouchableOpacity, StyleSheet, ScrollView, View, Image, Text, TextInput} from 'react-native';
+import {Alert, ToastAndroid, TouchableOpacity, StyleSheet, ScrollView, View, Image, Text, TextInput} from 'react-native';
 import firebase from 'react-native-firebase';
 import { Button, SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,13 +13,19 @@ export default class ChatScreen extends React.Component{
     super();
     this.ref = firebase.firestore().collection('Items');
     this.userRef = firebase.firestore().collection('Users');
+    this.chatRef = firebase.firestore().collection('Chats');
     this.unsubscribe = null;
     this.state = {
       isLoading: true,
       item: [],
-      user: [],
-      message: '',
+      buyer: firebase.auth().currentUser.email,
+      seller: '',
+      message: [],
       chatroom: '',
+      chat: [],
+      typing: '',
+      chatData: [],
+      record: [],
     };
   }
 
@@ -30,44 +36,23 @@ export default class ChatScreen extends React.Component{
   }
 
   updateBoard() {
-    if (this.state.imageUrl == ''){
-      Alert.alert("Invalid image format");
-    }
-    else if (this.state.name == '') {
-      Alert.alert("Invalid name");
-    }
-    else if (this.state.selectedCategory == null){
-      Alert.alert("Please select a category");
-    }
-    else if (parseFloat(this.state.price) <= 0 ){
-      Alert.alert("Invalid price input");
 
-    }
-    else {
-      this.setState({
-        isLoading: true,
-      });
       const { navigation } = this.props;
-      const updateRef = firebase.firestore().collection('Items').doc(this.state.key);
+      const updateRef = firebase.firestore().collection('Chats').doc(this.state.key);
       updateRef.set({
-        name: this.state.name,
-        description: this.state.description,
-        category: this.state.category,
-        price: this.state.price,
-        url: this.state.url,
-        user: firebase.auth().currentUser.email,
-        timestamp: this.state.timestamp,
-      }).then((docRef) => {
+        buyer: this.state.buyer,
+        seller: this.state.seller.name,
+        message: this.state.message,
+
+      })
+
+      .then((docRef) => {
         this.setState({
           key: '',
-          name: '',
-          description: '',
-          category: '',
-          price: '',
-          url: '',
-          isLoading: false,
+          buyer: '',
+          seller: '',
+          message: [],
         });
-        this.props.navigation.navigate('MyAccount');
 
       })
       .catch((error) => {
@@ -76,12 +61,64 @@ export default class ChatScreen extends React.Component{
           isLoading: false,
         });
       });
-    }
+      console.log("Done update")
   }
 
   componentDidMount() {
+    const {navigation} = this.props;
 
     this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    this.chatRef
+    .where("buyer", "==", this.state.buyer)
+    .where("seller", "==", JSON.parse(navigation.getParam('sellerEmail')))
+    .get()
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+          this.setState({
+            chatData: doc.data(),
+          })
+      })
+      console.log("this is buyer in chat: Hi" + this.state.chatData.buyer)
+      console.log("buyer has chat record")
+      console.log(this.state.chatData)
+    })
+
+
+    if (this.state.chatData == []){
+      this.chatRef.add({
+        buyer: this.state.buyer,
+        message: [],
+        seller: JSON.parse(navigation.getParam('sellerEmail')),
+      }).then((docRef) => {
+        this.setState({
+          buyer: '',
+          message: [],
+          seller: '',
+        });
+        Alert.alert("Chat created!");
+      })
+    }
+    else if (this.state.chatData != []){
+      Alert.alert("Chat exist" + this.state.chatData.seller)
+    }
+    /*if (this.state.chatData.seller != JSON.parse(navigation.getParam('sellerEmail')) && this.state.chatData.buyer != this.state.buyer){
+      this.chatRef.add({
+        buyer: this.state.buyer,
+        seller: JSON.parse(navigation.getParam('sellerEmail')),
+        message: [],
+      }).then((docRef) => {
+        this.setState({
+          buyer: '',
+          seller: '',
+          message: [],
+        });
+      });
+      console.log("Im didMount() seller: " + this.state.seller)
+      console.log("chat room created222 12345")
+    }else if (this.state.chatData.seller != JSON.parse(navigation.getParam('sellerEmail')) &&
+      this.state.chatData.buyer != this.state.buyer) {
+      console.log("Got Chat Before")
+    }*/
   }
 
   choosePhoto= () => {
@@ -135,20 +172,24 @@ export default class ChatScreen extends React.Component{
           item: doc.data(),
         })
       })
-      console.log("got item!")
+      console.log("this is item: " + this.state.item.name)
     });
+
 
    this.userRef.where("email", "==", JSON.parse(navigation.getParam('sellerEmail'))).get()
    .then((snapshot) => {
      snapshot.docs.forEach(doc => {
 
        this.setState({
-         user: doc.data(),
+         seller: doc.data(),
        })
      })
-     console.log(this.state.user.name)
+
+     console.log("this is seller email: " + this.state.seller.email)
+
    });
-  }
+ }
+
 
   render(){
     return(
@@ -156,15 +197,15 @@ export default class ChatScreen extends React.Component{
         <View>
           <Text> welcome to chat screen </Text>
         </View>
-        <Text> Hi {this.state.item.name} {this.state.user.name}</Text>
+        <Text> {this.state.item.name} {this.state.seller.name} {this.state.buyer}</Text>
         <TextInput
           style={ styles.input }
           placeholder="Enter message"
           value={ this.state.message }
           selectTextOnFocus ={ true }
-          onChangeText={(message) => {this.setState({message})}}
+          onChangeText={(typing) => this.updateTextInput(typing, 'typing')}
         />
-        <TouchableOpacity onPress={() =>{}}>
+        <TouchableOpacity onPress={this.updateBoard}>
           <View style={styles.button}>
             <Text style={styles.buttonText}>Send</Text>
           </View>
